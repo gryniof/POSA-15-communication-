@@ -54,6 +54,7 @@ public class ImageModelImplBoundService
                 // returned IBinder object and store it for later use
                 // in mRequestMessengerRef.
                 // TODO -- you fill in here.
+                mRequestMessengerRef = new Messenger(binder);
             }
 
             /**
@@ -70,6 +71,7 @@ public class ImageModelImplBoundService
                 // null, thereby preventing send() calls until it's
                 // reconnected.
                 // TODO -- you fill in here.
+                mRequestMessengerRef = null;
             }
 	};
 
@@ -95,12 +97,13 @@ public class ImageModelImplBoundService
             // that can download an image from the URL given by the
             // user.
             // TODO - you fill in here.
-
-            Log.d(TAG,
-                  "calling Context.bindService()");
+        	Intent intent = DownloadImagesBoundService.makeIntent(mImagePresenter.get().getApplicationContext());
+        	
+            Log.d(TAG, "calling Context.bindService()");
 
             // Bind to the Service associated with the Intent.
             // TODO -- you fill in here.
+            mImagePresenter.get().getApplicationContext().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
         }
     }
 
@@ -115,6 +118,7 @@ public class ImageModelImplBoundService
         if (mRequestMessengerRef != null) {
             // Unbind from the Service.
             // TODO -- you fill in here.
+        	mImagePresenter.get().getApplicationContext().unbindService(mServiceConnection);
 
             Log.d(TAG,
                   "calling Context.unbindService()");
@@ -122,6 +126,7 @@ public class ImageModelImplBoundService
             // Set this field to null to trigger a call to
             // bindService() next time bindService() is called.
             // TODO -- you fill in here.
+            mRequestMessengerRef = null;
         } 
     }
 
@@ -163,6 +168,7 @@ public class ImageModelImplBoundService
                 // Send the request Message to the
                 // DownloadImagesBoundService.
                 // TODO -- you fill in here.
+                mRequestMessengerRef.send(requestMessage.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
             }

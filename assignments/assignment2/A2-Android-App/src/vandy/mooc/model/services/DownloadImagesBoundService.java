@@ -5,7 +5,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import vandy.mooc.common.LifecycleLoggingService;
+import vandy.mooc.model.datamodel.ReplyMessage;
 import vandy.mooc.model.datamodel.RequestMessage;
+import vandy.mooc.utils.NetUtils;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -85,18 +87,22 @@ public class DownloadImagesBoundService
 
 	    // Get the reply Messenger.
 	    // TODO -- you fill in here.
-
+	    final Messenger replyMessenger = requestMessage.getMessenger();
+	    
 	    // Get the URL associated with the Message.
 	    // TODO -- you fill in here.
-
+	    final Uri imageUrl = requestMessage.getImageURL();
+	    
 	    // Get the directory pathname where the image will be
 	    // stored.
 	    // TODO -- you fill in here.
-
+	    final Uri pathToImgFile = requestMessage.getDirectoryPathname();
+	    
 	    // Get the requestCode for the operation that was invoked
 	    // by the Activity.
 	    // TODO -- you fill in here.
-
+	    final int requestCode = requestMessage.getRequestCode();
+	    
 	    // A Runnable that downloads the image, stores it in a
 	    // file, and sends the path to the file back to the
 	    // Activity.
@@ -106,21 +112,24 @@ public class DownloadImagesBoundService
 		     * This method runs in a background Thread.
 		     */
 		    @Override
-                    public void run() {
+            public void run() {
 	
-			// Download and store the requested image.
-			// TODO -- you fill in here.
-
-			// Send the path to the image file, url, and
-			// requestCode back to the Activity via the
-			// replyMessenger.
-			// TODO -- you fill in here.
+				// Download and store the requested image.
+				// TODO -- you fill in here.
+			    Uri pathToImg = NetUtils.downloadImage(mService.get(), imageUrl, pathToImgFile);
+			    
+				// Send the path to the image file, url, and
+				// requestCode back to the Activity via the
+				// replyMessenger.
+				// TODO -- you fill in here.
+			    sendPath(replyMessenger, pathToImg, imageUrl, requestCode);
 		    }
 		};
 
 	    // Execute the downloadImageAndReply Runnable to download
 	    // the image and reply.
 	    // TODO -- you fill in here.
+		mExecutorService.execute(downloadImageAndReply);
 	}
 
 	/**
@@ -134,14 +143,18 @@ public class DownloadImagesBoundService
 	    // Call the makeReplyMessage() factory method to create
 	    // Message.
 	    // TODO -- you fill in here.
+		ReplyMessage msg = ReplyMessage.makeReplyMessage(pathToImageFile, url, requestCode);
+		
 	    try {
-		Log.d(TAG,
-		      "sending "
-		      + pathToImageFile
-		      + " back to the MainActivity");
-
-		// Send the replyMessage back to the Activity.
-		// TODO -- you fill in here.
+			Log.d(TAG,
+			      "sending "
+			      + pathToImageFile
+			      + " back to the MainActivity");
+	
+			// Send the replyMessage back to the Activity.
+			// TODO -- you fill in here.
+			messenger.send(msg.getMessage());
+		
 	    } catch (RemoteException e) {
 		Log.e(getClass().getName(),
 		      "Exception while sending reply message back to Activity.",
@@ -154,7 +167,8 @@ public class DownloadImagesBoundService
 	 */
 	public void shutdown() {
 	    // Immediately shutdown the ExecutorService.
-	    // TODO -- you fill in here.        
+	    // TODO -- you fill in here.
+		mExecutorService.shutdownNow();
 	}
     }
 
@@ -166,7 +180,9 @@ public class DownloadImagesBoundService
         // Create an intent that will download the image from the web.
     	// TODO -- you fill in here, replacing null with the proper
     	// code.
-        return null;
+    	Intent downloadImageIntent = new Intent(context, DownloadImagesBoundService.class);
+		
+		return downloadImageIntent;
     }
 
     /**
@@ -177,9 +193,11 @@ public class DownloadImagesBoundService
         // Create a RequestHandler used to handle request Messages
         // sent from an Activity.
     	// TODO -- you fill in here.
-
+    	mRequestHandler = new RequestHandler(this);
+    	
         // Create a Messenger that encapsulates the RequestHandler.
     	// TODO -- you fill in here.
+    	mRequestMessenger = new Messenger(mRequestHandler);
     }
 
     /**
@@ -204,5 +222,6 @@ public class DownloadImagesBoundService
 
         // Shutdown the RequestHandler.
     	// TODO -- you fill in here.
+        mRequestHandler.shutdown();
     }
 }
