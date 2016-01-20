@@ -172,8 +172,7 @@ public class WeatherPresenter
         // displayed.
         mDisplayHandler.post(new Runnable() {
                 public void run() {
-                    mView.get().displayResults(weatherData,
-                                               reason);
+                    mView.get().displayResults(weatherData, reason);
                 }
             });
     }

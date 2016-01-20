@@ -18,10 +18,9 @@ import android.util.Log;
  * extends IBinder.  The client can then interact with this Service by
  * making two-way method calls on the WeatherCall object asking this
  * to lookup the current Weather for a designated location.  After the
- * lookup is finishes successfully, this Service sends the Weather
+ * lookup finishes successfully, this Service sends the Weather
  * results back to the Activity by returning a List of WeatherData.
- * An unsuccessful lookup will return a zero-sized List of
- * WeatherData.
+ * An unsuccessful lookup will return a zero-sized List of WeatherData.
  * 
  * AIDL is an example of the Broker Pattern, in which all interprocess
  * communication details are hidden behind the AIDL interfaces.
@@ -37,6 +36,7 @@ public class WeatherServiceSync
      */
     public static Intent makeIntent(Context context) {
         // TODO -- you fill in here.
+    	return new Intent(context, WeatherServiceSync.class);
     }
 
     /**
@@ -71,5 +71,24 @@ public class WeatherServiceSync
                 throws RemoteException {
 
                 // TODO -- you fill in here.
+            	// Call the weather service to get the list of
+                // weather conditions for the location.
+                final List<WeatherData> weatherData = getWeatherResults(location);
+
+                if (weatherData != null) {
+                    Log.d(TAG, "" 
+                          + weatherData.size() 
+                          + " results for location: " 
+                          + location);
+
+                    // Return the list of weather data back to WeatherModel.
+                    return weatherData;
+                } else {
+                    // Create a zero-sized WeatherData list object to
+                    // indicate to the caller that the weather data was
+                	// not obtained.
+                    return new ArrayList<WeatherData>();
+                }
+            }
         };
 }

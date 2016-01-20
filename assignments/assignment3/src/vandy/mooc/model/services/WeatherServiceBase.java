@@ -11,6 +11,7 @@ import java.util.List;
 import vandy.mooc.common.ExecutorServiceTimeoutCache;
 import vandy.mooc.common.GenericSingleton;
 import vandy.mooc.common.LifecycleLoggingService;
+import vandy.mooc.common.TimeoutCache;
 import vandy.mooc.model.aidl.WeatherData;
 import vandy.mooc.model.aidl.WeatherDataJsonParser;
 import android.util.Log;
@@ -23,9 +24,9 @@ import android.util.Log;
 public class WeatherServiceBase 
        extends LifecycleLoggingService {
     /**
-     * Appid needed to access the service.  TODO -- fill in with your Appid.
+     * Appid needed to access the service.  TODO -- fill in with your Appid. (h  P  )
      */
-    private final String mAppid = "";
+    private final String mAppid = "c1e1c8938a55522e06cd4ac38761fa45";
 
     /**
      * URL to the Weather Service web service.
@@ -50,7 +51,7 @@ public class WeatherServiceBase
      */
     public static class WeatherCache 
            extends ExecutorServiceTimeoutCache<String, List<WeatherData>> {}
-
+    
     /**
      * Hook method called when the Service is created.
      */
@@ -59,6 +60,7 @@ public class WeatherServiceBase
         super.onCreate();
 
         // TODO -- you fill in here.
+        GenericSingleton.instance(WeatherCache.class).incrementRefCount();
     }
 
     /**
@@ -70,20 +72,45 @@ public class WeatherServiceBase
         super.onDestroy();
 
         // TODO -- you fill in here.
+        if (GenericSingleton.instance(WeatherCache.class).decrementRefCount() == 0)
+        	GenericSingleton.remove(WeatherCache.class);
     }
 
     /**
-     * Contitionally queries the Weather Service web service to obtain
+     * Conditionally queries the Weather Service web service to obtain
      * a List of WeatherData corresponding to the @a location if it's
      * been more than 10 seconds since the last query to the Weather
      * Service.  Otherwise, simply return the cached results.
      */
     protected List<WeatherData> getWeatherResults(String location) {
-        Log.d(TAG,
-              "Looking up results in the cache for "
-              + location);
+    	
+    	Log.d(TAG, "Looking up results in the cache for " + location);
 
         // TODO -- you fill in here.
+    	
+    	// Try to get the results from the AcronymCache.
+        List<WeatherData> results =
+            GenericSingleton.instance(WeatherCache.class).get(location);
+
+        if (results != null) {
+            Log.d(TAG, "Getting results from the cache for " + location);
+           
+            // Return the results from the cache.
+            return results;
+        } else {
+            Log.d(TAG, "Getting results from the Weather Service for " + location);
+
+            // The results weren't already in the cache or were
+            // "stale", so obtain them from the Weather Service.
+            results = getResultsFromWeatherService(location);
+
+            if (results != null)
+                // Store the results into the cache for up to
+                // DEFAULT_CACHE_TIMEOUT seconds based on the location
+                // and return the results.
+                GenericSingleton.instance(WeatherCache.class).put
+                    (location, results, DEFAULT_CACHE_TIMEOUT);
+            return results;
         }
     }
 

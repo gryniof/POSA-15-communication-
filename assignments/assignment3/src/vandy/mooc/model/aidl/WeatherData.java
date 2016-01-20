@@ -11,17 +11,18 @@ import android.os.Parcelable;
  * the WeatherService app. It represents the response Json obtained from the
  * Open Weather Map API, e.g., a call to
  * http://api.openweathermap.org/data/2.5/weather?APPID=YOUR-APP-ID&q=Nashville,TN
- * might return
- * the following Json data:
+ * might return the following Json data:
  * 
- * { "coord":{ "lon":-86.78, "lat":36.17 }, "sys":{ "message":0.0138,
- * "country":"United States of America", "sunrise":1431427373,
- * "sunset":1431477841 }, "weather":[ { "id":802, "main":"Clouds",
- * "description":"scattered clouds", "icon":"03d" } ], "base":"stations",
- * "main":{ "temp":289.847, "temp_min":289.847, "temp_max":289.847,
- * "pressure":1010.71, "sea_level":1035.76, "grnd_level":1010.71, "humidity":76
- * }, "wind":{ "speed":2.42, "deg":310.002 }, "clouds":{ "all":36 },
- * "dt":1431435983, "id":4644585, "name":"Nashville", "cod":200 }
+ * { "coord":{ "lon":-86.78, "lat":36.17 },
+ * 	 "sys":{ "message":0.0138, "country":"United States of America", "sunrise":1431427373,
+ * 			 "sunset":1431477841 },
+ * 	 "weather":[ { "id":802, "main":"Clouds", "description":"scattered clouds", "icon":"03d" } ],
+ * 	 "base":"stations",
+ * 	 "main":{ "temp":289.847, "temp_min":289.847, "temp_max":289.847,
+ * 			  "pressure":1010.71, "sea_level":1035.76, "grnd_level":1010.71, "humidity":76},
+ * 	 "wind":{ "speed":2.42, "deg":310.002 },
+ * 	 "clouds":{ "all":36 },
+ * 	 "dt":1431435983, "id":4644585, "name":"Nashville", "cod":200 }
  *
  * The meaning of these Json fields is documented at
  * http://openweathermap.org/weather-data#current.
@@ -64,20 +65,19 @@ public class WeatherData implements Parcelable {
                        Main main,
                        Wind wind,
                        List<Weather> weathers) {
-	mName = name;
-	mDate = date;
-	mCod = cod;
-	mSys = sys;
-	mMain = main;
-	mWind = wind;
-	mWeathers = weathers;
+		mName = name;
+		mDate = date;
+		mCod = cod;
+		mSys = sys;
+		mMain = main;
+		mWind = wind;
+		mWeathers = weathers;
     }
     
     /**
      * Default constructor that initializes the POJO.
      */
-    public WeatherData() {
-    }
+    public WeatherData() { }
 
     /*
      * Getter and setter methods for fields
@@ -87,7 +87,7 @@ public class WeatherData implements Parcelable {
      * Getter method for the System info
      */
     public Sys getSys() {
-	return mSys;
+    	return mSys;
     }
 
     /**
@@ -96,14 +96,14 @@ public class WeatherData implements Parcelable {
      * @param sys
      */
     public void setSys(Sys sys) {
-	mSys = sys;
+    	mSys = sys;
     }
 
     /**
      * Getter method for the Main info
      */
     public Main getMain() {
-	return mMain;
+    	return mMain;
     }
 
     /**
@@ -112,14 +112,14 @@ public class WeatherData implements Parcelable {
      * @param main
      */
     public void setMain(Main main) {
-	mMain = main;
+    	mMain = main;
     }
 
     /**
      * Getter method for the Wind info
      */
     public Wind getWind() {
-	return mWind;
+    	return mWind;
     }
 
     /**
@@ -128,14 +128,14 @@ public class WeatherData implements Parcelable {
      * @param wind
      */
     public void setWind(Wind wind) {
-	mWind = wind;
+    	mWind = wind;
     }
 
     /**
      * Getter method for location's name
      */
     public String getName() {
-	return mName;
+    	return mName;
     }
 
     /**
@@ -144,14 +144,14 @@ public class WeatherData implements Parcelable {
      * @param name
      */
     public void setName(String name) {
-	mName = name;
+    	mName = name;
     }
 
     /**
      * Getter method for the data's date
      */
     public long getDate() {
-	return mDate;
+    	return mDate;
     }
 
     /**
@@ -160,14 +160,14 @@ public class WeatherData implements Parcelable {
      * @param date
      */
     public void setDate(long date) {
-	mDate = date;
+    	mDate = date;
     }
 
     /**
      * Getter method for the cod data
      */
     public long getCod() {
-	return mCod;
+    	return mCod;
     }
 
     /**
@@ -176,14 +176,14 @@ public class WeatherData implements Parcelable {
      * @param cod
      */
     public void setCod(long cod) {
-	mCod = cod;
+    	mCod = cod;
     }
 
     /**
      * Getter method for the Weather objects
      */
     public List<Weather> getWeathers() {
-	return mWeathers;
+    	return mWeathers;
     }
 
     /**
@@ -192,14 +192,14 @@ public class WeatherData implements Parcelable {
      * @param weathers
      */
     public void setWeathers(List<Weather> weathers) {
-	mWeathers = weathers;
+    	mWeathers = weathers;
     }
 
     /**
      * Getter method for the Message.
      */
     public String getMessage() {
-	return mMessage;
+    	return mMessage;
     }
 
     /**
@@ -208,7 +208,7 @@ public class WeatherData implements Parcelable {
      * @param message
      */
     public void setMessage(String message) {
-	mMessage = message;
+    	mMessage = message;
     }
 
     /**
@@ -233,60 +233,59 @@ public class WeatherData implements Parcelable {
         public final static String description_JSON = "description";
         public final static String icon_JSON = "icon";
 
-        /**
-         * Constructor sets the fields.
-         */
-	public Weather(long id,
-                       String main,
-                       String description,
-                       String icon) {
-	    mId = id;
-	    mMain = main;
-	    mDescription = description;
-	    mIcon = icon;
-	}
+	    /**
+	     * Constructor sets the fields.
+	     */
+		public Weather(long id,
+	                       String main,
+	                       String description,
+	                       String icon) {
+		    mId = id;
+		    mMain = main;
+		    mDescription = description;
+		    mIcon = icon;
+		}
 
-        /**
-         * Default constructor.
-         */
-	public Weather() {
-        }
-
-	/*
-	 * Getter and setting methods for fields.
-	 */
-
-	public long getId() {
-	    return mId;
-	}
-
-	public void setId(long id) {
-	    mId = id;
-	}
-
-	public String getMain() {
-	    return mMain;
-	}
-
-	public void setMain(String main) {
-	    mMain = main;
-	}
-
-	public String getDescription() {
-	    return mDescription;
-	}
-
-	public void setDescription(String description) {
-	    mDescription = description;
-	}
-
-	public String getIcon() {
-	    return mIcon;
-	}
-
-	public void setIcon(String icon) {
-	    mIcon = icon;
-	}
+	    /**
+	     * Default constructor.
+	     */
+		public Weather() { }
+	
+		/*
+		 * Getter and setting methods for fields.
+		 */
+		
+		public long getId() {
+		    return mId;
+		}
+	
+		public void setId(long id) {
+		    mId = id;
+		}
+	
+		public String getMain() {
+		    return mMain;
+		}
+	
+		public void setMain(String main) {
+		    mMain = main;
+		}
+	
+		public String getDescription() {
+		    return mDescription;
+		}
+	
+		public void setDescription(String description) {
+		    mDescription = description;
+		}
+	
+		public String getIcon() {
+		    return mIcon;
+		}
+	
+		public void setIcon(String icon) {
+		    mIcon = icon;
+		}
     }
 
     /**
@@ -313,55 +312,54 @@ public class WeatherData implements Parcelable {
         /**
          * Constructor sets the fields.
          */
-	public Sys(long sunrise,
-                   long sunset,
-                   String country) {
-	    mSunrise = sunrise;
-	    mSunset = sunset;
-	    mCountry = country;
-	}
+		public Sys(long sunrise,
+	                   long sunset,
+	                   String country) {
+		    mSunrise = sunrise;
+		    mSunset = sunset;
+		    mCountry = country;
+		}
 
         /**
          * Default constructor.
          */
-	public Sys() {
-        }
+		public Sys() { }
 
-	/*
-	 * Getter and setter methods for fields
-	 */
-
-	public long getSunrise() {
-	    return mSunrise;
-	}
-
-	public void setSunrise(long sunrise) {
-	    mSunrise = sunrise;
-	}
-
-	public long getSunset() {
-	    return mSunset;
-	}
-
-	public void setSunset(long sunset) {
-	    mSunset = sunset;
-	}
-
-	public String getCountry() {
-	    return mCountry;
-	}
-
-	public void setCountry(String country) {
-	    mCountry = country;
-	}
-
-	public double getMessage() {
-	    return mMessage;
-	}
-
-	public void setMessage(double message) {
-	    mMessage = message;
-	}
+		/*
+		 * Getter and setter methods for fields
+		 */
+	
+		public long getSunrise() {
+		    return mSunrise;
+		}
+	
+		public void setSunrise(long sunrise) {
+		    mSunrise = sunrise;
+		}
+	
+		public long getSunset() {
+		    return mSunset;
+		}
+	
+		public void setSunset(long sunset) {
+		    mSunset = sunset;
+		}
+	
+		public String getCountry() {
+		    return mCountry;
+		}
+	
+		public void setCountry(String country) {
+		    mCountry = country;
+		}
+	
+		public double getMessage() {
+		    return mMessage;
+		}
+	
+		public void setMessage(double message) {
+		    mMessage = message;
+		}
     }
 
     /**
@@ -390,47 +388,46 @@ public class WeatherData implements Parcelable {
         /**
          * Constructor sets the fields.
          */
-	public Main(double temp,
-                    long humidity,
-                    double pressure) {
-	    mTemp = temp;
-	    mHumidity = humidity;
-	    mPressure = pressure;
-	}
+		public Main(double temp,
+	                    long humidity,
+	                    double pressure) {
+		    mTemp = temp;
+		    mHumidity = humidity;
+		    mPressure = pressure;
+		}
 
         /**
          * Default constructor.
          */
-	public Main() {
-        }
+		public Main() { }
 
-	/*
-	 * Getter and setter methods for fields
-	 */
-
-	public double getPressure() {
-	    return mPressure;
-	}
-
-	public void setPressure(double pressure) {
-	    mPressure = pressure;
-	}
-
-	public double getTemp() {
-	    return mTemp;
-	}
-
-	public void setTemp(double temp) {
-	    mTemp = temp;
-	}
-
-	public long getHumidity() {
-	    return mHumidity;
-	}
-
-	public void setHumidity(long humidity) {
-	    mHumidity = humidity;
-	}
+		/*
+		 * Getter and setter methods for fields
+		 */
+	
+		public double getPressure() {
+		    return mPressure;
+		}
+	
+		public void setPressure(double pressure) {
+		    mPressure = pressure;
+		}
+	
+		public double getTemp() {
+		    return mTemp;
+		}
+	
+		public void setTemp(double temp) {
+		    mTemp = temp;
+		}
+	
+		public long getHumidity() {
+		    return mHumidity;
+		}
+	
+		public void setHumidity(long humidity) {
+		    mHumidity = humidity;
+		}
     }
 
     /**
@@ -453,37 +450,36 @@ public class WeatherData implements Parcelable {
         /**
          * Constructor sets the fields.
          */
-	public Wind(double speed,
-                    double deg) {
-	    mSpeed = speed;
-	    mDeg = deg;
-	}
+		public Wind(double speed,
+	                    double deg) {
+		    mSpeed = speed;
+		    mDeg = deg;
+		}
 
         /**
          * Default constructor.
          */
-	public Wind() {
-        }
+		public Wind() { }
 
-	/*
-	 * Getter and setter methods for fields
-	 */
-
-	public double getSpeed() {
-	    return mSpeed;
-	}
-
-	public void setSpeed(double speed) {
-	    mSpeed = speed;
-	}
-
-	public double getDeg() {
-	    return mDeg;
-	}
-
-	public void setDeg(double deg) {
-	    mDeg = deg;
-	}
+		/*
+		 * Getter and setter methods for fields
+		 */
+	
+		public double getSpeed() {
+		    return mSpeed;
+		}
+	
+		public void setSpeed(double speed) {
+		    mSpeed = speed;
+		}
+	
+		public double getDeg() {
+		    return mDeg;
+		}
+	
+		public void setDeg(double deg) {
+		    mDeg = deg;
+		}
     }
 
     /*
@@ -571,4 +567,3 @@ public class WeatherData implements Parcelable {
         }
     };
 }
-

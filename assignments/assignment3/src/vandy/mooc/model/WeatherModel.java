@@ -43,7 +43,10 @@ public class WeatherModel
 
     // TODO -- define ServiceConnetions to connect to the
     // WeatherServiceSync and WeatherServiceAsync.
-
+    private GenericServiceConnection<WeatherCall> mServiceConnSync;
+    
+    private GenericServiceConnection<WeatherRequest> mServiceConnAsync;
+    
     /**
      * Hook method called when a new WeatherModel instance is created
      * to initialize the ServicConnections and bind to the WeatherService*.
@@ -57,8 +60,10 @@ public class WeatherModel
         mPresenter = new WeakReference<>(presenter);
 
         // TODO -- you fill in here to initialize the WeatherService*.
+        mServiceConnSync = new GenericServiceConnection<WeatherCall>(WeatherCall.class);
+        
+        mServiceConnAsync = new GenericServiceConnection<WeatherRequest>(WeatherRequest.class);
 
-        // Bind to the services.
         bindService();
     }
 
@@ -70,8 +75,7 @@ public class WeatherModel
         // Don't bother unbinding the service if we're simply changing
         // configurations.
         if (isChangingConfigurations)
-            Log.d(TAG,
-                  "Simply changing configurations, no need to destroy the Service");
+            Log.d(TAG, "Simply changing configurations, no need to destroy the Service");
         else
             unbindService();
     }
@@ -97,6 +101,8 @@ public class WeatherModel
                 // Pass the results back to the Presenter's
                 // displayResults() method.
                 // TODO -- you fill in here.
+            	mPresenter.get().displayResults(weatherResults, "No error.");
+            	//this.sendResults(weatherResults);
             }
 
             /**
@@ -109,6 +115,7 @@ public class WeatherModel
                 // Pass the results back to the Presenter's
                 // displayResults() method.
                 // TODO -- you fill in here.
+            	mPresenter.get().displayResults(null, reason);
             }
 	};
 
@@ -116,8 +123,7 @@ public class WeatherModel
      * Initiate the service binding protocol.
      */
     private void bindService() {
-        Log.d(TAG,
-              "calling bindService()");
+        Log.d(TAG, "calling bindService()");
 
         // Launch the Weather Bound Services if they aren't already
         // running via a call to bindService(), which binds this
@@ -125,16 +131,39 @@ public class WeatherModel
         // bound.
 
         // TODO -- you fill in here.
+        if (mServiceConnSync.getInterface() == null) {
+        	mPresenter.get().getApplicationContext().bindService(
+        			WeatherServiceSync.makeIntent(
+        					mPresenter.get().getActivityContext()),
+        			mServiceConnSync,
+        			Context.BIND_AUTO_CREATE);
+        }
+        
+        if (mServiceConnAsync.getInterface() == null) {
+        	mPresenter.get().getApplicationContext().bindService(
+        			WeatherServiceAsync.makeIntent(
+        					mPresenter.get().getActivityContext()),
+        			mServiceConnAsync,
+        			Context.BIND_AUTO_CREATE);
+        }
     }
 
     /**
      * Initiate the service unbinding protocol.
      */
     private void unbindService() {
-        Log.d(TAG,
-              "calling unbindService()");
+        Log.d(TAG, "calling unbindService()");
 
         // TODO -- you fill in here to unbind from the WeatherService*.
+        if (mServiceConnSync.getInterface() != null) {
+            mPresenter.get().getApplicationContext().unbindService(
+            					mServiceConnSync);
+        }
+        
+        if (mServiceConnAsync.getInterface() != null) {
+            mPresenter.get().getApplicationContext().unbindService(
+            					mServiceConnAsync);
+        }
     }
 
     /**
@@ -142,7 +171,25 @@ public class WeatherModel
      */
     public boolean getWeatherAsync(String location) {
         // TODO -- you fill in here.
+        final WeatherRequest weatherRequest = mServiceConnAsync.getInterface();
 
+        if (weatherRequest != null) {
+            try {
+                // Invoke a one-way AIDL call that doesn't block the
+                // caller.  Results are returned via the sendResults()
+                // or sendError() methods of the WeatherResults
+                // callback object, which runs in a Thread from the
+                // Thread pool managed by the Binder framework.
+            	weatherRequest.getCurrentWeather(location, mWeatherResults);
+            	return true;
+            } catch (RemoteException e) {
+                Log.e(TAG, "RemoteException:" + e.getMessage());
+            }
+        } else {
+            Log.d(TAG, "weatherRequest was null.");
+        }
+        
+        return false;
     }
 
     /**
@@ -150,5 +197,25 @@ public class WeatherModel
      */
     public WeatherData getWeatherSync(String location) {
         // TODO -- you fill in here.
+    	try {
+            final WeatherCall weatherCall = mServiceConnSync.getInterface();
+
+            if (weatherCall != null) { 
+                // Invoke a two-way AIDL call, which blocks the caller.
+            	List<WeatherData> weathers = weatherCall.getCurrentWeather(location);
+            	
+            	if (weathers.size() > 0) {
+            		Log.d(TAG, "Returning non-null weather data.");
+            		return weathers.get(0);
+            	} 
+            } else { 
+                Log.d(TAG, "weatherCall was null.");
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    	
+    	Log.e(TAG, "Returning NULL weather data.");
+        return null;
     }
 }

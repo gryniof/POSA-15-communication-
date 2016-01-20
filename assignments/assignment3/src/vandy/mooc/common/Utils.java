@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.IBinder;
+import android.os.Looper;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -122,6 +123,14 @@ public class Utils {
             activity.setResult(Activity.RESULT_OK);
     }
 
+    /**
+     * @return True if the caller is running on the UI thread, else
+     * false.
+     */
+    public static boolean runningOnUiThread() {
+        return Thread.currentThread() == Looper.getMainLooper().getThread();
+    }
+    
     /**
      * Ensure this class is only used as a utility.
      */

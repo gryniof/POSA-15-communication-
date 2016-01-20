@@ -1,9 +1,11 @@
 package vandy.mooc.model.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import vandy.mooc.common.Utils;
 import vandy.mooc.model.aidl.WeatherData;
 import vandy.mooc.model.aidl.WeatherRequest;
 import vandy.mooc.model.aidl.WeatherResults;
@@ -48,6 +50,7 @@ public class WeatherServiceAsync
      */
     public static Intent makeIntent(Context context) {
         // TODO -- you fill in here.
+    	return new Intent(context, WeatherServiceAsync.class);
     }
     
     /**
@@ -109,6 +112,45 @@ public class WeatherServiceAsync
             public void getCurrentWeather(final String location,
                                           final WeatherResults callback) {
                 // TODO -- you fill in here.
+            	final Runnable getCurrentWeatherRunnable = new Runnable() {
+            		public void run() {
+	            		// Call the weather service to get the list of
+	                    // weather conditions for the location.
+            			try {
+            				final List<WeatherData> weatherData = getWeatherResults(location);
+	                    
+		                    if (weatherData != null) {
+		                        Log.d(TAG, "" 
+		                              + weatherData.size() 
+		                              + " results for location: " 
+		                              + location);
+		
+		                        // Invoke one-way callback to send weather data back to the client.
+		                        callback.sendResults(weatherData.get(0));
+		                    } else {
+		                        // Invoke one-way callback to send the error back to the client.
+		                    	Log.e(TAG, "No weather results for: " + location);
+		                        callback.sendError("No weather results for: " + location);
+		                    }
+	                    } catch (Exception e) {
+	                    	Log.e(TAG, "getCurrentWeather() " + e);
+	                    }
+            		}
+            	};
+            	
+                if (Utils.runningOnUiThread()) {
+                    // Execute getCurrentWeatherRunnable in a separate
+                    // thread if this service has been configured to
+                    // be collocated with an Activity.
+                	Log.d(TAG, "Running in the separate thread (same process as UI).");
+                    mExecutorService.execute(getCurrentWeatherRunnable);
+                } else { 
+                    // Run the getCurrentAcronymRunnable in the pool
+                    // thread if this service has been configured to
+                    // run in its own process.
+                	Log.d(TAG, "Running in the pool thread (separate process).");
+                    getCurrentWeatherRunnable.run();
+                }
             }
         };
 }
